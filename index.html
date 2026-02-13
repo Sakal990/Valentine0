@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Proposal</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
+}
+
+body{
+height:100vh;
+overflow:hidden;
+background:radial-gradient(circle,#3b0a45,#140016 70%);
+color:white;
+}
+
+/* ================= LOADING DOORS ================= */
+#loadingScreen{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+z-index:999;
+}
+
+.door{
+position:absolute;
+width:50%;
+height:100%;
+background:linear-gradient(90deg,#3b2400,#8b6508);
+transition:2s ease;
+}
+
+.leftDoor{ left:0; }
+.rightDoor{ right:0; }
+
+.open .leftDoor{ transform:translateX(-100%); }
+.open .rightDoor{ transform:translateX(100%); }
+
+/* ================= MAIN ================= */
+.main{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+opacity:0;
+transition:2s;
+}
+
+.showMain{ opacity:1; }
+
+.card{
+text-align:center;
+padding:40px;
+border-radius:25px;
+background:rgba(255,255,255,0.05);
+backdrop-filter:blur(10px);
+box-shadow:0 0 40px rgba(255,0,120,.3);
+}
+
+/* ================= RING BOX ================= */
+.box{
+width:140px;
+height:100px;
+margin:0 auto 20px;
+position:relative;
+perspective:800px;
+cursor:pointer;
+}
+
+img{
+width:100%;
+height:100%;
+border-radius:15px;
+transition:1s;
+transform-style:preserve-3d;
+}
+
+/* ================= 3D RING ================= */
+.ringScene{
+width:120px;
+height:120px;
+margin:0 auto 20px;
+perspective:800px;
+display:none;
+}
+
+.showRing{ display:block; }
+
+.ringCube{
+width:100%;
+height:100%;
+position:relative;
+transform-style:preserve-3d;
+animation:spinRing 8s linear infinite;
+}
+
+.face{
+position:absolute;
+width:120px;
+height:120px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:70px;
+background:rgba(255,215,0,.08);
+border:1px solid rgba(255,215,0,.2);
+}
+
+.front{ transform:translateZ(60px); }
+.back{ transform:rotateY(180deg) translateZ(60px); }
+.left{ transform:rotateY(-90deg) translateZ(60px); }
+.right{ transform:rotateY(90deg) translateZ(60px); }
+.top{ transform:rotateX(90deg) translateZ(60px); }
+.bottom{ transform:rotateX(-90deg) translateZ(60px); }
+
+@keyframes spinRing{
+0%{ transform:rotateX(0) rotateY(0); }
+100%{ transform:rotateX(360deg) rotateY(360deg); }
+}
+
+/* ================= BUTTONS ================= */
+.btn{
+padding:14px 40px;
+border:none;
+border-radius:50px;
+font-size:18px;
+cursor:pointer;
+margin:10px;
+}
+
+.yes{
+background:linear-gradient(45deg,#ff4d88,#ff0066);
+color:white;
+}
+
+.no{
+position:fixed;
+background:#444;
+color:white;
+}
+
+/* ================= PARTICLES ================= */
+.sparkle{
+position:fixed;
+pointer-events:none;
+font-size:12px;
+animation:spark 1s linear forwards;
+}
+
+@keyframes spark{
+0%{ opacity:1; transform:scale(1); }
+100%{ opacity:0; transform:scale(2) translateY(-20px); }
+}
+
+/* ================= ROSE FOLLOW ================= */
+.mouseRose{
+position:fixed;
+pointer-events:none;
+font-size:20px;
+transition:.2s linear;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="loadingScreen">
+<div class="door leftDoor"></div>
+<div class="door rightDoor"></div>
+</div>
+
+<div class="main" id="mainContent">
+<div class="card">
+
+<div class="box" id="ringBox">
+    <img src="photo/1770049986822.jpg" alt="" class="box-lid box-base">
+</div>
+
+<h1>Babui ❤️<br>Will you be my Valentine?</h1>
+
+<button class="btn yes" onclick="goYes()">Yes</button>
+<button class="btn no" id="noBtn">No</button>
+
+</div>
+</div>
+
+<script>
+
+/* ===== DOOR OPEN ===== */
+window.onload=()=>{
+setTimeout(()=>{
+document.getElementById("loadingScreen").classList.add("open");
+},500);
+
+setTimeout(()=>{
+loadingScreen.style.display="none";
+mainContent.classList.add("showMain");
+},2500);
+};
+
+/* ===== RING BOX OPEN ===== */
+const box=document.getElementById("ringBox");
+const ringScene=document.getElementById("ringScene");
+
+box.onclick=()=>{
+box.classList.add("open");
+setTimeout(()=>{
+ringScene.classList.add("showRing");
+},700);
+};
+
+/* ===== YES ===== */
+function goYes(){
+window.location.href="success.html";
+}
+
+/* ===== EVASIVE NO ===== */
+const noBtn=document.getElementById("noBtn");
+
+/* ===== SET INITIAL SAFE POSITION ===== */
+function setInitialPosition() {
+  const padding = 200; // keeps away from edges
+  const btnW = noBtn.offsetWidth;
+  const btnH = noBtn.offsetHeight;
+
+  const maxX = window.innerWidth - btnW - padding;
+  const maxY = window.innerHeight - btnH - padding;
+
+  const minX = padding;
+  const minY = padding;
+
+  const initialX = Math.random() * (maxX - minX) + minX;
+  const initialY = Math.random() * (maxY - minY) + minY;
+
+  noBtn.style.left = initialX + "px";
+  noBtn.style.top = initialY + "px";
+}
+
+/* ===== SAFE RANDOM MOVE ===== */
+function moveBtn() {
+
+  const padding = 200; // keeps away from edges
+
+  const btnW = noBtn.offsetWidth;
+  const btnH = noBtn.offsetHeight;
+
+  const maxX = window.innerWidth - btnW - padding;
+  const maxY = window.innerHeight - btnH - padding;
+
+  const minX = padding;
+  const minY = padding;
+
+  const randomX = Math.random() * (maxX - minX) + minX;
+  const randomY = Math.random() * (maxY - minY) + minY;
+
+  noBtn.style.left = randomX + "px";
+  noBtn.style.top = randomY + "px";
+
+  noBtn.style.display = "block"; // ensure visible
+}
+
+/* EVENTS */
+noBtn.addEventListener("mouseenter", moveBtn);
+
+noBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  moveBtn();
+});
+
+noBtn.addEventListener("touchstart", moveBtn);
+
+/* Recalculate if screen resize */
+window.addEventListener("resize", setInitialPosition);
+
+/* ===== SPARKLE TRAIL ===== */
+document.addEventListener("mousemove",(e)=>{
+const s=document.createElement("div");
+s.className="sparkle";
+s.innerHTML="✨";
+s.style.left=e.clientX+"px";
+s.style.top=e.clientY+"px";
+document.body.appendChild(s);
+setTimeout(()=>s.remove(),1000);
+});
+
+/* ===== ROSE FOLLOW MOUSE ===== */
+const rose=document.createElement("div");
+rose.className="mouseRose";
+rose.innerHTML="🌹";
+document.body.appendChild(rose);
+
+document.addEventListener("mousemove",(e)=>{
+rose.style.left=(e.clientX+15)+"px";
+rose.style.top=(e.clientY+15)+"px";
+});
+
+</script>
+
+</body>
+</html>
